@@ -1,0 +1,15 @@
+# Ignore the following files and directories for Azure Functions deployment
+*.pyc
+__pycache__/
+.env
+*.env
+*.local.settings.json
+tests/
+data/
+infra/
+*.bicep
+*.bicepparam
+*.json
+*.xlsx
+*.pdf
+*.log

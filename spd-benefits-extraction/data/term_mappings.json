@@ -1,0 +1,586 @@
+{
+  "$schema": "./term_mappings.schema.json",
+  "_comment": "This file contains ALL term mappings - edit this file to add new terms without code changes",
+  "_version": "1.0.0",
+  "_last_updated": "2024-01-15",
+  
+  "standard_values": {
+    "_description": "These are the FIXED OUTPUT values we normalize TO (the Excel column values)",
+    
+    "network_tier": [
+      "In-Network",
+      "Out-of-Network"
+    ],
+    
+    "service_category": [
+      "Deductibles & Out-of-Pocket",
+      "Preventive Care",
+      "Primary Care",
+      "Specialist Services",
+      "Emergency Services",
+      "Urgent Care",
+      "Inpatient Hospital Services",
+      "Outpatient Hospital Services",
+      "Mental Health - Inpatient",
+      "Mental Health - Outpatient",
+      "Substance Abuse - Inpatient",
+      "Substance Abuse - Outpatient",
+      "Maternity - Prenatal",
+      "Maternity - Delivery",
+      "Prescription Drugs",
+      "Prescription - Generic",
+      "Prescription - Brand",
+      "Prescription - Specialty",
+      "Rehabilitation - Inpatient",
+      "Rehabilitation - Outpatient",
+      "Skilled Nursing Facility",
+      "Home Health Care",
+      "Hospice Care",
+      "Durable Medical Equipment",
+      "Prosthetics & Orthotics",
+      "Diagnostic - Lab",
+      "Diagnostic - Imaging",
+      "Diagnostic - X-Ray",
+      "Diagnostic - Advanced Imaging",
+      "Ambulance Services",
+      "Vision Services",
+      "Dental Services",
+      "Hearing Services",
+      "Chiropractic Services",
+      "Acupuncture",
+      "Infertility Treatment",
+      "Organ Transplant",
+      "Dialysis",
+      "Chemotherapy",
+      "Radiation Therapy",
+      "Other Services"
+    ],
+    
+    "limit_period": [
+      "Calendar Year",
+      "Benefit Year",
+      "Plan Year",
+      "Lifetime",
+      "Per Visit",
+      "Per Admission",
+      "Per Confinement",
+      "Per Occurrence",
+      "Rolling 12 Months",
+      "Per Pregnancy",
+      "Per Condition"
+    ],
+    
+    "coverage_status": [
+      "Covered",
+      "Not Covered",
+      "Covered in Full",
+      "Subject to Deductible",
+      "Deductible Waived",
+      "N/A"
+    ],
+    
+    "preauth_status": [
+      "Required",
+      "Not Required",
+      "May Be Required"
+    ],
+    
+    "after_deductible": [
+      "Yes",
+      "No"
+    ]
+  },
+  
+  "mappings": {
+    "_description": "Maps input terms to standard values. Add new terms here as you encounter them.",
+    
+    "network_tier": {
+      "_comment": "All variations that mean In-Network or Out-of-Network",
+      
+      "in-network": "In-Network",
+      "in network": "In-Network",
+      "innetwork": "In-Network",
+      "in_network": "In-Network",
+      "network": "In-Network",
+      "participating": "In-Network",
+      "par": "In-Network",
+      "preferred": "In-Network",
+      "tier 1": "In-Network",
+      "tier1": "In-Network",
+      "tier i": "In-Network",
+      "tier one": "In-Network",
+      "ppo": "In-Network",
+      "hmo": "In-Network",
+      "epo": "In-Network",
+      "pos": "In-Network",
+      "preferred provider": "In-Network",
+      "network provider": "In-Network",
+      "contracted": "In-Network",
+      "contracted provider": "In-Network",
+      "member provider": "In-Network",
+      "plan provider": "In-Network",
+      "bluechoice": "In-Network",
+      "blueoption": "In-Network",
+      "blue choice": "In-Network",
+      "bluecross": "In-Network",
+      "blueshield": "In-Network",
+      "inn": "In-Network",
+      "in-net": "In-Network",
+      "i/n": "In-Network",
+      "in/network": "In-Network",
+      "choice plus": "In-Network",
+      "options ppo": "In-Network",
+      "navigate": "In-Network",
+      "pathway": "In-Network",
+      "blue access": "In-Network",
+      "aetna choice": "In-Network",
+      "open access": "In-Network",
+      "localplus": "In-Network",
+      "premier": "In-Network",
+      "signature": "In-Network",
+      "advantage": "In-Network",
+      "select": "In-Network",
+      "choice": "In-Network",
+      
+      "out-of-network": "Out-of-Network",
+      "out of network": "Out-of-Network",
+      "outofnetwork": "Out-of-Network",
+      "out_of_network": "Out-of-Network",
+      "non-network": "Out-of-Network",
+      "non network": "Out-of-Network",
+      "nonnetwork": "Out-of-Network",
+      "non-participating": "Out-of-Network",
+      "non participating": "Out-of-Network",
+      "nonparticipating": "Out-of-Network",
+      "non-par": "Out-of-Network",
+      "nonpar": "Out-of-Network",
+      "non par": "Out-of-Network",
+      "tier 2": "Out-of-Network",
+      "tier2": "Out-of-Network",
+      "tier ii": "Out-of-Network",
+      "tier two": "Out-of-Network",
+      "tier 3": "Out-of-Network",
+      "tier3": "Out-of-Network",
+      "tier iii": "Out-of-Network",
+      "non-ppo": "Out-of-Network",
+      "nonppo": "Out-of-Network",
+      "non ppo": "Out-of-Network",
+      "non-preferred": "Out-of-Network",
+      "nonpreferred": "Out-of-Network",
+      "non preferred": "Out-of-Network",
+      "out-of-area": "Out-of-Network",
+      "out of area": "Out-of-Network",
+      "outofarea": "Out-of-Network",
+      "oon": "Out-of-Network",
+      "oonn": "Out-of-Network",
+      "o/n": "Out-of-Network",
+      "out/network": "Out-of-Network",
+      "o-o-n": "Out-of-Network",
+      "non-contracted": "Out-of-Network",
+      "noncontracted": "Out-of-Network",
+      "indemnity": "Out-of-Network",
+      "fee-for-service": "Out-of-Network",
+      "ffs": "Out-of-Network",
+      "non-member": "Out-of-Network",
+      "non member": "Out-of-Network",
+      "traditional": "Out-of-Network",
+      "basic": "Out-of-Network",
+      "standard": "Out-of-Network",
+      "non-bluecard": "Out-of-Network",
+      "non-cigna": "Out-of-Network",
+      "non-aetna": "Out-of-Network"
+    },
+    
+    "coverage_status": {
+      "not covered": "Not Covered",
+      "no coverage": "Not Covered",
+      "excluded": "Not Covered",
+      "not a covered benefit": "Not Covered",
+      "not a benefit": "Not Covered",
+      "does not cover": "Not Covered",
+      "no benefit": "Not Covered",
+      "n/a": "N/A",
+      "na": "N/A",
+      "not applicable": "N/A",
+      
+      "covered in full": "Covered in Full",
+      "100% covered": "Covered in Full",
+      "100 percent covered": "Covered in Full",
+      "no charge": "Covered in Full",
+      "no cost": "Covered in Full",
+      "$0": "Covered in Full",
+      "$0 copay": "Covered in Full",
+      "0 copay": "Covered in Full",
+      "no copay": "Covered in Full",
+      "paid in full": "Covered in Full",
+      "plan pays 100%": "Covered in Full",
+      "we pay 100%": "Covered in Full",
+      "no member cost": "Covered in Full",
+      "no out of pocket": "Covered in Full"
+    },
+    
+    "after_deductible": {
+      "after deductible": "Yes",
+      "subject to deductible": "Yes",
+      "after the deductible": "Yes",
+      "following deductible": "Yes",
+      "deductible applies": "Yes",
+      "ded applies": "Yes",
+      "applies to deductible": "Yes",
+      "after plan deductible": "Yes",
+      "after annual deductible": "Yes",
+      "after in-network deductible": "Yes",
+      "after out-of-network deductible": "Yes",
+      
+      "deductible waived": "No",
+      "no deductible": "No",
+      "deductible does not apply": "No",
+      "not subject to deductible": "No",
+      "deductible not applicable": "No",
+      "ded waived": "No",
+      "waives deductible": "No",
+      "deductible n/a": "No",
+      "before deductible": "No"
+    },
+    
+    "limit_period": {
+      "per year": "Calendar Year",
+      "per calendar year": "Calendar Year",
+      "calendar year": "Calendar Year",
+      "annually": "Calendar Year",
+      "annual": "Calendar Year",
+      "each year": "Calendar Year",
+      "yearly": "Calendar Year",
+      "/yr": "Calendar Year",
+      "/year": "Calendar Year",
+      "per 12 months": "Calendar Year",
+      
+      "per benefit year": "Benefit Year",
+      "benefit year": "Benefit Year",
+      "per benefit period": "Benefit Year",
+      "benefit period": "Benefit Year",
+      
+      "per plan year": "Plan Year",
+      "plan year": "Plan Year",
+      "policy year": "Plan Year",
+      
+      "lifetime": "Lifetime",
+      "per lifetime": "Lifetime",
+      "lifetime maximum": "Lifetime",
+      "lifetime max": "Lifetime",
+      "lifetime limit": "Lifetime",
+      
+      "per visit": "Per Visit",
+      "each visit": "Per Visit",
+      "/visit": "Per Visit",
+      
+      "per admission": "Per Admission",
+      "each admission": "Per Admission",
+      "per hospital stay": "Per Admission",
+      "per stay": "Per Admission",
+      "per hospitalization": "Per Admission",
+      
+      "per confinement": "Per Confinement",
+      "each confinement": "Per Confinement",
+      
+      "per occurrence": "Per Occurrence",
+      "each occurrence": "Per Occurrence",
+      "per episode": "Per Occurrence",
+      "each episode": "Per Occurrence",
+      "per incident": "Per Occurrence",
+      "per condition": "Per Condition",
+      
+      "rolling 12 months": "Rolling 12 Months",
+      "rolling twelve months": "Rolling 12 Months",
+      "rolling year": "Rolling 12 Months",
+      
+      "per pregnancy": "Per Pregnancy",
+      "each pregnancy": "Per Pregnancy"
+    },
+    
+    "preauth_status": {
+      "preauthorization required": "Required",
+      "pre-authorization required": "Required",
+      "prior authorization required": "Required",
+      "prior auth required": "Required",
+      "pa required": "Required",
+      "precertification required": "Required",
+      "pre-certification required": "Required",
+      "requires preauthorization": "Required",
+      "requires prior authorization": "Required",
+      "requires pa": "Required",
+      "must be preauthorized": "Required",
+      "must be pre-authorized": "Required",
+      "requires approval": "Required",
+      "approval required": "Required",
+      "*": "Required",
+      "**": "Required",
+      "***": "Required",
+      
+      "no preauthorization": "Not Required",
+      "no pre-authorization": "Not Required",
+      "preauthorization not required": "Not Required",
+      "no prior authorization": "Not Required",
+      "pa not required": "Not Required",
+      "no precertification": "Not Required",
+      "no approval needed": "Not Required",
+      
+      "preauthorization may be required": "May Be Required",
+      "may require preauthorization": "May Be Required",
+      "prior auth may be needed": "May Be Required",
+      "check with plan": "May Be Required"
+    }
+  },
+  
+  "patterns": {
+    "_description": "Regex patterns for matching. Use when exact match isn't sufficient.",
+    
+    "network_tier": [
+      {"pattern": "\\bin[- ]?net\\b", "maps_to": "In-Network"},
+      {"pattern": "\\bout[- ]?of[- ]?net\\b", "maps_to": "Out-of-Network"},
+      {"pattern": "\\bnon[- ]?par\\b", "maps_to": "Out-of-Network"},
+      {"pattern": "\\btier\\s*[1i]\\b", "maps_to": "In-Network"},
+      {"pattern": "\\btier\\s*[2-9]\\b", "maps_to": "Out-of-Network"},
+      {"pattern": "\\bppo\\b", "maps_to": "In-Network"},
+      {"pattern": "\\bhmo\\b", "maps_to": "In-Network"}
+    ],
+    
+    "service_category": [
+      {"pattern": "emergency\\s+(?:and|&)\\s+urgent\\s+care(?:\\s+services?)?", "maps_to": "Emergency Services", "_comment": "Combined emergency/urgent category headers"},
+      {"pattern": "physician\\s+services?", "maps_to": "Primary Care", "_comment": "Physician Services category header"},
+      {"pattern": "office\\s+visit\\s+(?:for\\s+)?(?:injury|illness)", "maps_to": "Primary Care", "_comment": "Office visit for injury/illness parent header"},
+      {"pattern": "prevent|wellness|routine\\s+(?:physical|exam)|well[- ]?(?:child|baby|woman)", "maps_to": "Preventive Care"},
+      {"pattern": "annual\\s+(?:physical|exam|checkup)|yearly\\s+(?:physical|exam)|periodic\\s+health", "maps_to": "Preventive Care"},
+      {"pattern": "screenings?|colonoscopy|mammogram|pap\\s+(?:smear|test)", "maps_to": "Preventive Care"},
+      {"pattern": "immuniz|vaccin|shots?\\s+(?:and|&)?\\s*immuniz", "maps_to": "Immunizations"},
+      {"pattern": "flu\\s+shot|covid[- ]?19\\s+(?:vaccine|shot)|childhood\\s+(?:vaccines?|immuniz)", "maps_to": "Immunizations"},
+      {"pattern": "primary\\s+care|pcp\\b|office\\s+visit|physician\\s+(?:office|visit)", "maps_to": "Primary Care"},
+      {"pattern": "doctor(?:'?s)?\\s+(?:office|visit)|medical\\s+(?:office|visit)|virtual\\s+visit", "maps_to": "Primary Care"},
+      {"pattern": "telehealth|telemedicine|video\\s+visit|e-?visit", "maps_to": "Telehealth"},
+      {"pattern": "specialist|referral\\s+(?:to\\s+)?specialist", "maps_to": "Specialist Services"},
+      {"pattern": "consultation|consult(?:ing)?\\s+(?:physician|doctor)", "maps_to": "Specialist Services"},
+      {"pattern": "emergency|\\ber\\b|\\bed\\b|emergency\\s+(?:room|department)", "maps_to": "Emergency Services"},
+      {"pattern": "urgent\\s+care|walk[- ]?in\\s+(?:clinic|care)|retail\\s+clinic", "maps_to": "Urgent Care"},
+      {"pattern": "convenience\\s+care|minute\\s+clinic", "maps_to": "Urgent Care"},
+      {"pattern": "inpatient.*hosp|hospital.*inpatient|room\\s+(?:and|&)\\s+board", "maps_to": "Inpatient Hospital Services"},
+      {"pattern": "hospital\\s+stay|overnight\\s+(?:hospital|stay)|admission\\s+(?:to\\s+)?hospital", "maps_to": "Inpatient Hospital Services"},
+      {"pattern": "intensive\\s+care|icu\\b|critical\\s+care", "maps_to": "Inpatient Hospital Services"},
+      {"pattern": "outpatient.*hosp|hospital.*outpatient|ambulatory\\s+surg", "maps_to": "Outpatient Hospital Services"},
+      {"pattern": "same[- ]?day\\s+surgery|day\\s+surgery|outpatient\\s+surgery", "maps_to": "Outpatient Hospital Services"},
+      {"pattern": "operating\\s+room|surgical\\s+(?:facility|center)|surgery\\s+(?:center|facility)", "maps_to": "Surgery Services"},
+      {"pattern": "surgeon|surgical\\s+(?:procedure|service)", "maps_to": "Surgery Services"},
+      {"pattern": "anesthesia|anesthetic", "maps_to": "Anesthesia Services"},
+      {"pattern": "mental\\s+health.*inpatient|inpatient.*(?:mental|psych)", "maps_to": "Mental Health - Inpatient"},
+      {"pattern": "psychiatric\\s+(?:hospital|facility|inpatient)|mental\\s+(?:hospital|facility)", "maps_to": "Mental Health - Inpatient"},
+      {"pattern": "mental\\s+health|behavioral|psychiatric|therap|counseling", "maps_to": "Mental Health - Outpatient"},
+      {"pattern": "psychologist|psychiatrist|psychotherapy|talk\\s+therapy", "maps_to": "Mental Health - Outpatient"},
+      {"pattern": "emotional|anxiety|depression\\s+(?:treatment|therapy)|stress\\s+(?:counseling|treatment)", "maps_to": "Mental Health - Outpatient"},
+      {"pattern": "substance|alcohol|drug\\s+(?:abuse|treatment)|detox", "maps_to": "Substance Abuse - Outpatient"},
+      {"pattern": "chemical\\s+dependency|addiction|opioid|suboxone|methadone", "maps_to": "Substance Abuse - Outpatient"},
+      {"pattern": "(?:prenatal|maternity).*care|obstetric|ob[- ]?gyn\\s+(?:prenatal|visit)", "maps_to": "Maternity - Prenatal"},
+      {"pattern": "pregnancy|(?:ante)?natal\\s+care|before\\s+delivery", "maps_to": "Maternity - Prenatal"},
+      {"pattern": "delivery|labor\\s+(?:and|&)\\s+delivery|childbirth", "maps_to": "Maternity - Delivery"},
+      {"pattern": "c[- ]?section|cesarean|vaginal\\s+(?:delivery|birth)|birthing", "maps_to": "Maternity - Delivery"},
+      {"pattern": "newborn|after\\s+birth|post[- ]?partum|postnatal", "maps_to": "Newborn Care"},
+      {"pattern": "well[- ]?baby|(?:newborn|infant)\\s+(?:care|visit)|nursery", "maps_to": "Newborn Care"},
+      {"pattern": "prescription|pharmacy|\\brx\\b|formulary|medications?", "maps_to": "Prescription Drugs"},
+      {"pattern": "drug\\s+coverage|covered\\s+drugs?|mail\\s+order\\s+(?:pharmacy|drugs?)", "maps_to": "Prescription Drugs"},
+      {"pattern": "generic.*drug|tier\\s*1.*drug|generic\\s+(?:medication|rx)", "maps_to": "Prescription - Generic"},
+      {"pattern": "brand.*drug|tier\\s*2.*drug|preferred\\s+brand|formulary\\s+brand", "maps_to": "Prescription - Brand"},
+      {"pattern": "non[- ]?formulary|tier\\s*3|non[- ]?preferred\\s+brand", "maps_to": "Prescription - Non-Preferred"},
+      {"pattern": "specialty.*drug|tier\\s*4.*drug|specialty\\s+(?:pharmacy|medication)", "maps_to": "Prescription - Specialty"},
+      {"pattern": "biologic|self[- ]?inject|infusion\\s+drug", "maps_to": "Prescription - Specialty"},
+      {"pattern": "rehab|physical\\s+therapy|\\bpt\\b|occupational\\s+therapy|\\bot\\b|speech\\s+therapy", "maps_to": "Rehabilitation - Outpatient"},
+      {"pattern": "habilitation|habilitative|cardiac\\s+(?:rehab|rehabilitation)", "maps_to": "Rehabilitation - Outpatient"},
+      {"pattern": "pulmonary\\s+(?:rehab|rehabilitation)|respiratory\\s+therapy", "maps_to": "Rehabilitation - Outpatient"},
+      {"pattern": "skilled\\s+nursing|\\bsnf\\b|nursing\\s+(?:facility|home)", "maps_to": "Skilled Nursing Facility"},
+      {"pattern": "extended\\s+care|convalescent|sub[- ]?acute", "maps_to": "Skilled Nursing Facility"},
+      {"pattern": "home\\s+health|home\\s+(?:care|nursing)|visiting\\s+nurse", "maps_to": "Home Health Care"},
+      {"pattern": "home\\s+infusion|private\\s+duty\\s+nursing", "maps_to": "Home Health Care"},
+      {"pattern": "hospice|palliative|end[- ]?of[- ]?life", "maps_to": "Hospice Care"},
+      {"pattern": "durable\\s+medical|\\bdme\\b|wheelchair|oxygen|crutches", "maps_to": "Durable Medical Equipment"},
+      {"pattern": "medical\\s+equipment|cpap|nebulizer|walker|hospital\\s+bed", "maps_to": "Durable Medical Equipment"},
+      {"pattern": "prosthetic|orthotic|artificial\\s+limb|brace", "maps_to": "Prosthetics & Orthotics"},
+      {"pattern": "orthopedic\\s+(?:device|appliance)|leg\\s+brace|arm\\s+brace", "maps_to": "Prosthetics & Orthotics"},
+      {"pattern": "lab(?:oratory)?|blood\\s+(?:test|work)|pathology", "maps_to": "Diagnostic - Lab"},
+      {"pattern": "diagnostic\\s+test|urinalysis|chemistry\\s+panel|cbc", "maps_to": "Diagnostic - Lab"},
+      {"pattern": "x[- ]?ray|radiograph|chest\\s+x[- ]?ray", "maps_to": "Diagnostic - X-Ray"},
+      {"pattern": "mri|ct\\s+scan|pet\\s+scan|nuclear\\s+medicine|advanced\\s+imaging", "maps_to": "Diagnostic - Advanced Imaging"},
+      {"pattern": "ultrasound|sonogram|echocardiogram|echo", "maps_to": "Diagnostic - Advanced Imaging"},
+      {"pattern": "imaging|radiology|diagnostic\\s+imaging", "maps_to": "Diagnostic - Imaging"},
+      {"pattern": "ekg|eeg|ekgs?|electrocardiogram|stress\\s+test", "maps_to": "Diagnostic - Cardiac"},
+      {"pattern": "ambulance|(?:emergency\\s+)?transport|air\\s+ambulance", "maps_to": "Ambulance Services"},
+      {"pattern": "medical\\s+transport|ground\\s+(?:ambulance|transport)|medevac", "maps_to": "Ambulance Services"},
+      {"pattern": "vision|eye\\s+exam|glasses|optometrist|eyewear", "maps_to": "Vision Services"},
+      {"pattern": "ophthalmolog|contact\\s+lens|lasik|eye\\s+surgery", "maps_to": "Vision Services"},
+      {"pattern": "dental|oral|tooth|teeth|orthodontia|braces", "maps_to": "Dental Services"},
+      {"pattern": "routine\\s+dental|dental\\s+checkup|dental\\s+cleaning", "maps_to": "Dental Services"},
+      {"pattern": "hearing|audiology|hearing\\s+aid|cochlear", "maps_to": "Hearing Services"},
+      {"pattern": "hearing\\s+(?:exam|test|screening)", "maps_to": "Hearing Services"},
+      {"pattern": "chiropractic|spinal\\s+manipulation|chiropractor", "maps_to": "Chiropractic Services"},
+      {"pattern": "acupuncture|acupuncturist", "maps_to": "Acupuncture"},
+      {"pattern": "infertility|ivf|in[- ]?vitro|fertility", "maps_to": "Infertility Treatment"},
+      {"pattern": "artificial\\s+insemination|reproductive\\s+(?:assist|service)", "maps_to": "Infertility Treatment"},
+      {"pattern": "transplant|organ\\s+transplant|bone\\s+marrow\\s+transplant", "maps_to": "Organ Transplant"},
+      {"pattern": "dialysis|renal|kidney\\s+(?:dialysis|treatment)", "maps_to": "Dialysis"},
+      {"pattern": "chemotherapy|chemo|oncology|cancer\\s+(?:treatment|therapy)", "maps_to": "Chemotherapy"},
+      {"pattern": "radiation\\s+(?:therapy|treatment)|proton\\s+therapy", "maps_to": "Radiation Therapy"},
+      {"pattern": "deductible|out[- ]?of[- ]?pocket|\\boop\\b|max(?:imum)?\\s+out[- ]?of[- ]?pocket", "maps_to": "Deductibles & Out-of-Pocket"},
+      {"pattern": "coinsurance\\s+(?:max|limit)|individual\\s+(?:oop|out[- ]?of[- ]?pocket)", "maps_to": "Deductibles & Out-of-Pocket"},
+      {"pattern": "family\\s+(?:deductible|oop|out[- ]?of[- ]?pocket)", "maps_to": "Deductibles & Out-of-Pocket"},
+      {"pattern": "allergy|allergen|allergy\\s+(?:test|shot|injection)", "maps_to": "Allergy Services"},
+      {"pattern": "podiatr|foot\\s+(?:care|doctor)|chiropodist", "maps_to": "Podiatry Services"},
+      {"pattern": "pediatric|child(?:ren)?\\s+(?:care|visit|service)", "maps_to": "Pediatric Services"},
+      {"pattern": "dermatolog|skin\\s+(?:care|exam|treatment)", "maps_to": "Dermatology Services"},
+      {"pattern": "sleep\\s+(?:study|lab|apnea)|polysomnography", "maps_to": "Sleep Services"},
+      {"pattern": "infusion|\\biv\\b\\s+(?:therapy|infusion)|injectable|outpatient\\s+infusion", "maps_to": "Infusion Therapy"},
+      {"pattern": "genetic\\s+(?:test|counseling|screening)", "maps_to": "Genetic Services"},
+      {"pattern": "physical\\s+medicine|\\bpm&r\\b|physiatry", "maps_to": "Physical Medicine"},
+      {"pattern": "applied\\s+behavioral|aba\\s+(?:therapy|treatment)|autism", "maps_to": "Autism Services"}
+    ],
+    
+    "coverage_status": [
+      {"pattern": "not\\s+covered", "maps_to": "Not Covered"},
+      {"pattern": "no\\s+coverage", "maps_to": "Not Covered"},
+      {"pattern": "excluded", "maps_to": "Not Covered"},
+      {"pattern": "covered\\s+in\\s+full", "maps_to": "Covered in Full"},
+      {"pattern": "100\\s*%\\s*covered", "maps_to": "Covered in Full"},
+      {"pattern": "no\\s+(?:charge|cost|copay)", "maps_to": "Covered in Full"},
+      {"pattern": "\\$\\s*0(?:\\.00)?\\b", "maps_to": "Covered in Full"}
+    ],
+    
+    "after_deductible": [
+      {"pattern": "(?:after|subject\\s+to|following)\\s+(?:the\\s+)?(?:plan\\s+)?deductible", "maps_to": "Yes"},
+      {"pattern": "ded(?:uctible)?\\s+applies", "maps_to": "Yes"},
+      {"pattern": "(?:deductible|ded)\\s+(?:waived|not\\s+applicable|n/?a|does\\s+not\\s+apply)", "maps_to": "No"},
+      {"pattern": "no\\s+(?:annual\\s+)?deductible", "maps_to": "No"},
+      {"pattern": "waive[ds]?\\s+(?:the\\s+)?ded(?:uctible)?", "maps_to": "No"}
+    ],
+    
+    "preauth_status": [
+      {"pattern": "pre[- ]?(?:authorization|certification|auth)\\s+required", "maps_to": "Required"},
+      {"pattern": "prior\\s+auth(?:orization)?\\s+required", "maps_to": "Required"},
+      {"pattern": "requires?\\s+(?:pre[- ]?)?(?:authorization|approval|pa)", "maps_to": "Required"},
+      {"pattern": "must\\s+(?:be\\s+)?pre[- ]?(?:approved|authorized)", "maps_to": "Required"},
+      {"pattern": "no\\s+(?:pre[- ]?)?(?:authorization|precert)", "maps_to": "Not Required"},
+      {"pattern": "pre[- ]?auth(?:orization)?\\s+not\\s+required", "maps_to": "Not Required"},
+      {"pattern": "may\\s+(?:be\\s+)?require|check\\s+with\\s+plan", "maps_to": "May Be Required"}
+    ],
+    
+    "hierarchical_service_patterns": {
+      "_description": "Patterns for recognizing parent-child service structures",
+      "parent_indicators": [
+        {"pattern": "office\\s+visit\\s+(?:for\\s+)?(?:injury|illness)", "_comment": "Office Visit for Injury/Illness parent row"},
+        {"pattern": "urgent\\s+care\\s+(?:physician(?:'?s)?\\s+)?office", "_comment": "Urgent Care Physician's Office parent row"},
+        {"pattern": "childbirth[/\\s]+delivery", "_comment": "Childbirth/Delivery parent row"},
+        {"pattern": "mental\\s+health\\s+(?:services?)?$", "_comment": "Mental Health parent when no in/outpatient specified"},
+        {"pattern": "substance\\s+(?:abuse|use)\\s+(?:services?)?$", "_comment": "Substance Abuse parent row"},
+        {"pattern": "rehabilitation\\s+(?:services?)?$", "_comment": "Rehabilitation parent row"}
+      ],
+      "child_indicators": [
+        {"pattern": "^\\s*primary\\s+care\\s*$", "_comment": "Primary Care child row"},
+        {"pattern": "^\\s*specialist\\s*$", "_comment": "Specialist child row"},
+        {"pattern": "^\\s*(?:in|out)patient\\s*$", "_comment": "Inpatient/Outpatient child row"},
+        {"pattern": "^\\s*(?:facility|professional)\\s+(?:services?|fee)?\\s*$", "_comment": "Facility/Professional child row"}
+      ]
+    }
+  },
+  
+  "payer_specific": {
+    "_description": "Payer-specific terminology that overrides defaults. Add new payers as needed.",
+    
+    "UnitedHealthcare": {
+      "network_tier": {
+        "Choice Plus": "In-Network",
+        "Options PPO": "In-Network",
+        "Navigate": "In-Network",
+        "Compass": "In-Network",
+        "Traditional": "Out-of-Network"
+      }
+    },
+    
+    "Anthem": {
+      "network_tier": {
+        "BlueCard PPO": "In-Network",
+        "Pathway": "In-Network",
+        "Blue Access": "In-Network",
+        "Blue Priority": "In-Network",
+        "Non-BlueCard": "Out-of-Network"
+      }
+    },
+    
+    "Aetna": {
+      "network_tier": {
+        "Aetna Choice POS": "In-Network",
+        "Aetna Choice POS II": "In-Network",
+        "Open Access": "In-Network",
+        "Aetna Select": "In-Network",
+        "Non-Aetna": "Out-of-Network"
+      }
+    },
+    
+    "Cigna": {
+      "network_tier": {
+        "Open Access Plus": "In-Network",
+        "OAP": "In-Network",
+        "LocalPlus": "In-Network",
+        "Cigna Preferred": "In-Network",
+        "Non-Cigna": "Out-of-Network"
+      }
+    },
+    
+    "BCBS": {
+      "network_tier": {
+        "BlueCard": "In-Network",
+        "Blue Distinction": "In-Network",
+        "Blue Select": "In-Network",
+        "Traditional": "Out-of-Network"
+      }
+    },
+    
+    "Humana": {
+      "network_tier": {
+        "ChoiceCare": "In-Network",
+        "Humana Preferred": "In-Network",
+        "Non-Humana": "Out-of-Network"
+      }
+    },
+    
+    "Kaiser": {
+      "network_tier": {
+        "Kaiser Facility": "In-Network",
+        "Kaiser Provider": "In-Network",
+        "Out-of-Area": "Out-of-Network"
+      }
+    }
+  },
+  
+  "regional_variations": {
+    "_description": "Regional terminology that may differ by state/region",
+    
+    "california": {
+      "network_tier": {
+        "Knox-Keene": "In-Network"
+      }
+    },
+    
+    "new_york": {
+      "network_tier": {
+        "Article 43": "In-Network"
+      }
+    }
+  },
+  
+  "learned_mappings": {
+    "_description": "Mappings learned from user corrections or LLM - added automatically",
+    "_auto_generated": true
+  },
+  
+  "extensibility": {
+    "_description": "Instructions for extending this configuration",
+    "how_to_add_term": "Add new term under the appropriate category in 'mappings' section",
+    "how_to_add_pattern": "Add new regex pattern under 'patterns' section",
+    "how_to_add_payer": "Add new payer section under 'payer_specific' with their terminology",
+    "how_to_add_standard_value": "Add to 'standard_values' and update Excel generator"
+  }
+}

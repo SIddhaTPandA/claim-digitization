@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "BlobStorageConnectionString": "<Your Blob Storage Connection String>",
+    "ServiceBusConnectionString": "<Your Service Bus Connection String>",
+    "SqlConnectionString": "<Your SQL Database Connection String>",
+    "KeyVaultUri": "<Your Key Vault URI>",
+    "DocumentIntelligenceEndpoint": "<Your Document Intelligence Endpoint>",
+    "ApplicationInsightsInstrumentationKey": "<Your Application Insights Instrumentation Key>"
+  }
+}

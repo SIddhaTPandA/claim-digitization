@@ -1,0 +1,22 @@
+[tool]
+name = "spd-benefits-extraction"
+version = "0.1.0"
+description = "An Azure-native Intelligent Document Processing solution for extracting healthcare benefits data from SPD/SBC PDF documents."
+authors = ["Your Name <your.email@example.com>"]
+license = "MIT"
+
+[tool.poetry]
+dependencies = [
+    "azure-functions",
+    "azure-storage-blob",
+    "azure-servicebus",
+    "pandas",
+    "openpyxl",
+    "PyPDF2",
+    "pydantic",
+    "requests",
+]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

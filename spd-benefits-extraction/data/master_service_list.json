@@ -1,0 +1,326 @@
+{
+  "$schema": "./master_service_list.schema.json",
+  "_comment": "Master reference catalog of standard healthcare services for validation and matching",
+  "_version": "1.1.0",
+  "_last_updated": "2026-02-26",
+  
+  "service_categories": {
+    "_description": "Categories that group related services together",
+    
+    "Physician Services": {
+      "description": "Office visits and professional services",
+      "services": [
+        "Office Visit for Injury / Illness - Primary Care",
+        "Office Visit for Injury / Illness - Specialist",
+        "Office Visit - Primary Care",
+        "Office Visit - Specialist",
+        "Primary Care Visit",
+        "Specialist Visit",
+        "Consultation",
+        "Second Opinion",
+        "Virtual Visit - Primary Care",
+        "Virtual Visit - Specialist",
+        "Telehealth Visit"
+      ]
+    },
+    
+    "Preventive Care": {
+      "description": "Wellness and preventive services",
+      "services": [
+        "Annual Physical Exam",
+        "Well-Child Visit",
+        "Well-Woman Exam",
+        "Routine Immunizations",
+        "Preventive Screenings",
+        "Colonoscopy - Preventive",
+        "Mammogram - Preventive",
+        "Pap Smear",
+        "Prostate Screening",
+        "Flu Shot",
+        "COVID-19 Vaccine"
+      ]
+    },
+    
+    "Emergency and Urgent Care Services": {
+      "description": "Emergency room and urgent care visits",
+      "services": [
+        "Emergency Room Visit",
+        "Emergency Room - Facility Fee",
+        "Emergency Room - Physician Fee",
+        "Urgent Care Physician's Office - Primary Care",
+        "Urgent Care Physician's Office - Specialist",
+        "Urgent Care Facility",
+        "Urgent Care Visit",
+        "Walk-in Clinic Visit"
+      ]
+    },
+    
+    "Inpatient Hospital Services": {
+      "description": "Hospital stays and inpatient care",
+      "services": [
+        "Inpatient Hospital Stay - Room & Board",
+        "Inpatient Hospital - Facility Fee",
+        "Inpatient Hospital - Physician/Surgeon Fee",
+        "Intensive Care Unit (ICU)",
+        "Skilled Nursing Facility Stay",
+        "Inpatient Surgery"
+      ]
+    },
+    
+    "Outpatient Hospital Services": {
+      "description": "Outpatient procedures and surgeries",
+      "services": [
+        "Outpatient Surgery - Facility Fee",
+        "Outpatient Surgery - Physician/Surgeon Fee",
+        "Ambulatory Surgical Center",
+        "Outpatient Procedure",
+        "Same-Day Surgery"
+      ]
+    },
+    
+    "Mental Health and Substance Abuse": {
+      "description": "Behavioral health services",
+      "services": [
+        "Mental Health - Inpatient",
+        "Mental Health - Outpatient",
+        "Mental Health Office Visit",
+        "Psychiatric Services - Inpatient",
+        "Psychiatric Services - Outpatient",
+        "Substance Abuse - Inpatient",
+        "Substance Abuse - Outpatient",
+        "Substance Abuse Treatment",
+        "Detoxification - Inpatient",
+        "Counseling Session"
+      ]
+    },
+    
+    "Maternity and Newborn Care": {
+      "description": "Pregnancy and childbirth services",
+      "services": [
+        "Prenatal Office Visit",
+        "Prenatal Care",
+        "Childbirth/Delivery - Professional Services",
+        "Childbirth/Delivery - Facility Services",
+        "Vaginal Delivery - Facility",
+        "Vaginal Delivery - Professional",
+        "C-Section Delivery - Facility",
+        "C-Section Delivery - Professional",
+        "Newborn Care",
+        "Well-Baby Visit"
+      ]
+    },
+    
+    "Diagnostic Services": {
+      "description": "Lab and imaging services",
+      "services": [
+        "Laboratory Services",
+        "Diagnostic Lab Work",
+        "Blood Work",
+        "X-Ray - Diagnostic",
+        "X-Ray - Outpatient",
+        "Advanced Imaging (CT/PET/MRI)",
+        "CT Scan",
+        "MRI",
+        "PET Scan",
+        "Ultrasound",
+        "Mammogram - Diagnostic"
+      ]
+    },
+    
+    "Prescription Drugs": {
+      "description": "Pharmacy benefits",
+      "services": [
+        "Generic Drugs",
+        "Preferred Brand Drugs",
+        "Non-Preferred Brand Drugs",
+        "Specialty Drugs",
+        "Mail Order - Generic (90-day)",
+        "Mail Order - Brand (90-day)",
+        "Retail Pharmacy - Generic",
+        "Retail Pharmacy - Brand"
+      ]
+    },
+    
+    "Rehabilitation Services": {
+      "description": "Physical, occupational, and speech therapy",
+      "services": [
+        "Physical Therapy",
+        "Occupational Therapy",
+        "Speech Therapy",
+        "Cardiac Rehabilitation",
+        "Pulmonary Rehabilitation",
+        "Outpatient Rehabilitation",
+        "Inpatient Rehabilitation"
+      ]
+    },
+    
+    "Durable Medical Equipment": {
+      "description": "Medical equipment and supplies",
+      "services": [
+        "Durable Medical Equipment (DME)",
+        "Wheelchair",
+        "Hospital Bed",
+        "CPAP Machine",
+        "Oxygen Equipment",
+        "Prosthetics",
+        "Orthotics",
+        "Diabetic Supplies"
+      ]
+    },
+    
+    "Home Health and Hospice": {
+      "description": "Home-based care services",
+      "services": [
+        "Home Health Care",
+        "Home Health Aide",
+        "Skilled Nursing - Home",
+        "Home Infusion Therapy",
+        "Hospice Care",
+        "Palliative Care"
+      ]
+    },
+    
+    "Ambulance Services": {
+      "description": "Emergency transportation",
+      "services": [
+        "Ground Ambulance",
+        "Air Ambulance",
+        "Emergency Medical Transport",
+        "Non-Emergency Medical Transport"
+      ]
+    },
+    
+    "Vision Services": {
+      "description": "Eye care and vision",
+      "services": [
+        "Routine Eye Exam",
+        "Eyeglasses - Frames",
+        "Eyeglasses - Lenses",
+        "Contact Lenses",
+        "Vision Therapy"
+      ]
+    },
+    
+    "Dental Services": {
+      "description": "Dental care",
+      "services": [
+        "Routine Dental Exam",
+        "Dental Cleaning",
+        "Dental X-Rays",
+        "Basic Dental Procedures",
+        "Major Dental Procedures",
+        "Orthodontia"
+      ]
+    },
+    
+    "Other Services": {
+      "description": "Additional covered services",
+      "services": [
+        "Chiropractic Care",
+        "Acupuncture",
+        "Hearing Exam",
+        "Hearing Aids",
+        "Infertility Treatment",
+        "Bariatric Surgery",
+        "Organ Transplant",
+        "Dialysis",
+        "Chemotherapy",
+        "Radiation Therapy",
+        "Allergy Testing",
+        "Allergy Injections"
+      ]
+    }
+  },
+  
+  "hierarchical_services": {
+    "_description": "Services that have parent-child relationships in benefit tables",
+    
+    "Office Visit for Injury / Illness": {
+      "children": ["Primary Care", "Specialist"],
+      "format": "{parent} - {child}"
+    },
+    "Urgent Care Physician's Office": {
+      "children": ["Primary Care", "Specialist"],
+      "format": "{parent} - {child}"
+    },
+    "Childbirth/Delivery": {
+      "children": ["Professional Services", "Facility Services"],
+      "format": "{parent} - {child}"
+    },
+    "Mental Health": {
+      "children": ["Inpatient", "Outpatient"],
+      "format": "{parent} - {child}"
+    },
+    "Substance Abuse": {
+      "children": ["Inpatient", "Outpatient"],
+      "format": "{parent} - {child}"
+    },
+    "Rehabilitation": {
+      "children": ["Inpatient", "Outpatient"],
+      "format": "{parent} - {child}"
+    }
+  },
+  
+  "service_aliases": {
+    "_description": "Common aliases/variations for service names",
+    
+    "PCP Visit": "Primary Care Visit",
+    "Primary Care Physician": "Primary Care Visit",
+    "Doctor's Office Visit": "Office Visit - Primary Care",
+    "Specialist Consultation": "Specialist Visit",
+    "ER Visit": "Emergency Room Visit",
+    "ER": "Emergency Room Visit",
+    "Emergency Department": "Emergency Room Visit",
+    "Urgent Care": "Urgent Care Visit",
+    "Walk-in Clinic": "Walk-in Clinic Visit",
+    "Lab Work": "Laboratory Services",
+    "Labs": "Laboratory Services",
+    "Bloodwork": "Blood Work",
+    "DME": "Durable Medical Equipment (DME)",
+    "PT": "Physical Therapy",
+    "OT": "Occupational Therapy",
+    "ST": "Speech Therapy",
+    "MH Outpatient": "Mental Health - Outpatient",
+    "MH Inpatient": "Mental Health - Inpatient",
+    "SA Outpatient": "Substance Abuse - Outpatient",
+    "SA Inpatient": "Substance Abuse - Inpatient",
+    "SNF": "Skilled Nursing Facility Stay",
+    "Skilled Nursing": "Skilled Nursing Facility Stay",
+    "ASC": "Ambulatory Surgical Center",
+    "Preventive": "Preventive Care",
+    "Wellness Visit": "Annual Physical Exam",
+    "Routine Physical": "Annual Physical Exam",
+    "Well Child": "Well-Child Visit",
+    "Well Woman": "Well-Woman Exam",
+    "Generic Rx": "Generic Drugs",
+    "Brand Rx": "Preferred Brand Drugs",
+    "Specialty Rx": "Specialty Drugs",
+    "CT": "CT Scan",
+    "CAT Scan": "CT Scan"
+  },
+  
+  "deductible_services": {
+    "_description": "Services and their typical deductible applicability",
+    
+    "deductible_typically_applies": [
+      "Emergency Room Visit",
+      "Inpatient Hospital Stay - Room & Board",
+      "Outpatient Surgery - Facility Fee",
+      "Advanced Imaging (CT/PET/MRI)",
+      "Specialty Drugs",
+      "Air Ambulance"
+    ],
+    
+    "deductible_typically_waived": [
+      "Annual Physical Exam",
+      "Well-Child Visit",
+      "Well-Woman Exam",
+      "Routine Immunizations",
+      "Preventive Screenings",
+      "Primary Care Visit",
+      "Generic Drugs"
+    ]
+  },
+  
+  "last_updated": "2026-02-26"
+}
