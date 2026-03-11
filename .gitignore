@@ -1,1 +1,4 @@
 .env
+sam_venv/
+*.pdf
+*.xlsx
