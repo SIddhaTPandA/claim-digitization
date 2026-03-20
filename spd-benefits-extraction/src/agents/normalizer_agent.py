@@ -213,6 +213,11 @@ class NormalizerAgent:
         in_network_parsed = self.parse_benefit_text(raw_record.in_network_text or "")
         out_network_parsed = self.parse_benefit_text(raw_record.out_of_network_text or "")
         
+        # FIXED: Handle merged cells - if In-Network has value but Out-of-Network is empty,
+        # check if they should share the same value (common for Emergency Room, etc.)
+        if self._should_propagate_merged_value(raw_record, in_network_parsed, out_network_parsed):
+            out_network_parsed = in_network_parsed.copy()
+        
         # Apply preventive service defaults if no explicit coinsurance
         service_name = raw_record.service_name or raw_record.service_category or ""
         if self._is_preventive_service(service_name):
@@ -659,3 +664,75 @@ class NormalizerAgent:
             return (base_confidence * 0.7) + (parsing_confidence * 0.3)
         
         return base_confidence
+
+    def _should_propagate_merged_value(
+        self,
+        raw_record: RawExtractionRecord,
+        in_network_parsed: Dict[str, Any],
+        out_network_parsed: Dict[str, Any],
+    ) -> bool:
+        """
+        Detect if In-Network and Out-of-Network should have the same value (merged cell).
+        
+        This handles the common case where a PDF has a merged cell spanning both
+        network columns (e.g., "Emergency Room: 80%" applies to both IN and OON).
+        
+        Detection criteria:
+        1. In-Network has a value (coinsurance or copay)
+        2. Out-of-Network text is empty or null
+        3. Service matches patterns that commonly have merged values:
+           - Emergency services
+           - Urgent care
+           - Services with "both networks" language
+        
+        Args:
+            raw_record: The raw extraction record
+            in_network_parsed: Parsed In-Network benefits
+            out_network_parsed: Parsed Out-of-Network benefits
+            
+        Returns:
+            True if Out-of-Network should copy In-Network value
+        """
+        # Criterion 1: IN has value, OON is empty
+        has_in_value = bool(
+            in_network_parsed.get("coinsurance") or in_network_parsed.get("copay")
+        )
+        has_out_value = bool(
+            out_network_parsed.get("coinsurance") or out_network_parsed.get("copay")
+        )
+        
+        if not has_in_value or has_out_value:
+            return False  # Nothing to propagate, or OON already has value
+        
+        # Criterion 2: OON text is truly empty (not just unparseable)
+        out_text = (raw_record.out_of_network_text or "").strip()
+        if out_text and out_text.lower() not in ("", "n/a", "na", "same", "same as in-network"):
+            return False  # OON has text but we couldn't parse it - don't assume it's merged
+        
+        # Criterion 3: Service name matches common merged-cell patterns
+        service_name = (raw_record.service_name or "").lower()
+        
+        # Pattern 1: Emergency services (mandated same coverage by law)
+        emergency_patterns = [
+            "emergency room", "emergency department", "er ", "emergency treatment",
+            "emergency care", "emergency services", "emergency medical",
+        ]
+        if any(pattern in service_name for pattern in emergency_patterns):
+            return True
+        
+        # Pattern 2: Urgent care (often same for both networks)
+        if "urgent care" in service_name:
+            return True
+        
+        # Pattern 3: Services with explicit "both networks" language in category
+        category = (raw_record.service_category or "").lower()
+        if any(phrase in category for phrase in ["both network", "all network", "emergency"]):
+            return True
+        
+        # Pattern 4: Check extraction notes for merged cell indicators
+        if hasattr(raw_record, 'extraction_notes'):
+            notes = " ".join(raw_record.extraction_notes).lower()
+            if "merged" in notes or "spanning" in notes:
+                return True
+        
+        return False

@@ -238,32 +238,65 @@ class PDFProcessor:
         return result
 
     def _parse_azure_table(self, table, table_idx: int) -> Dict[str, Any]:
-        """Parse an Azure Document Intelligence table into structured format."""
+        """
+        Parse an Azure Document Intelligence table into structured format.
+        
+        FIXED: Properly handles merged cells by propagating content across all spanned columns.
+        For example, if a cell with "80%" spans both In-Network and Out-of-Network columns,
+        the value will now appear in both columns instead of just the first one.
+        """
         cells = []
         rows_dict: Dict[int, Dict[int, str]] = {}
         
         row_count = getattr(table, "row_count", 0)
         column_count = getattr(table, "column_count", 0)
         
+        # Track which cells have been filled by merged cells
+        merged_cell_map: Dict[Tuple[int, int], str] = {}
+        
         for cell in table.cells:
             row_idx = cell.row_index
             col_idx = cell.column_index
             content = cell.content.strip() if cell.content else ""
+            row_span = getattr(cell, "row_span", 1)
+            col_span = getattr(cell, "column_span", 1)
             
-            # Store cell data
+            # Store cell metadata
             cells.append({
                 "row_index": row_idx,
                 "column_index": col_idx,
                 "content": content,
-                "row_span": getattr(cell, "row_span", 1),
-                "column_span": getattr(cell, "column_span", 1),
+                "row_span": row_span,
+                "column_span": col_span,
                 "kind": getattr(cell, "kind", "content"),  # "columnHeader", "rowHeader", "content"
             })
             
-            # Also build row-based structure
+            # Build row-based structure with merged cell propagation
             if row_idx not in rows_dict:
                 rows_dict[row_idx] = {}
-            rows_dict[row_idx][col_idx] = content
+            
+            # FIXED: Propagate merged cell content across all spanned columns and rows
+            for r_offset in range(row_span):
+                for c_offset in range(col_span):
+                    target_row = row_idx + r_offset
+                    target_col = col_idx + c_offset
+                    
+                    # Only propagate within table bounds
+                    if target_row < row_count and target_col < column_count:
+                        if target_row not in rows_dict:
+                            rows_dict[target_row] = {}
+                        
+                        # Fill the cell with content (propagate merged value)
+                        rows_dict[target_row][target_col] = content
+                        merged_cell_map[(target_row, target_col)] = content
+                        
+                        # Log merged cell propagation for debugging
+                        if col_span > 1 or row_span > 1:
+                            if r_offset == 0 and c_offset == 0:
+                                logger.debug(
+                                    f"Table {table_idx}: Merged cell at ({row_idx},{col_idx}) "
+                                    f"with span ({row_span}x{col_span}) - propagating '{content}'"
+                                )
         
         # Convert to list of lists
         rows = []
@@ -287,6 +320,7 @@ class PDFProcessor:
             "row_count": row_count,
             "column_count": column_count,
             "header_row_index": header_row_idx,
+            "merged_cells_count": len([c for c in cells if c.get("column_span", 1) > 1 or c.get("row_span", 1) > 1]),
         }
 
     def _extract_with_pdfplumber(self, pdf_path: str) -> ExtractionResult:
