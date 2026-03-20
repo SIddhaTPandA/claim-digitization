@@ -526,6 +526,12 @@ class RawExtractionRecord(BaseModel):
         description="Raw service name text from document",
     )
 
+    # NEW: Raw description/narrative text
+    description_text: Optional[str] = Field(
+        default=None,
+        description="Raw narrative description including inclusion/exclusion criteria and conditions",
+    )
+
     # Raw benefit text (before parsing into coinsurance/copay)
     in_network_text: Optional[str] = Field(
         default=None,

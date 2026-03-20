@@ -845,6 +845,7 @@ class SchemaRecordBuilder:
         return RawExtractionRecord(
             service_category=category,
             service_name=service_name,  # Use potentially truncated service_name
+            description_text=None,  # NEW: Add description_text field (will be populated by extractor)
             in_network_text=in_network_text,
             out_of_network_text=out_network_text,
             preauth_text=preauth_text,

@@ -2,3 +2,4 @@
 sam_venv/
 *.pdf
 *.xlsx
+.pyc

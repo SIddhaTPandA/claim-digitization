@@ -558,6 +558,7 @@ class ExtractorAgent:
             records.append(RawExtractionRecord(
                 service_category=current_category,
                 service_name=service_name,
+                description_text=None,  # NEW: Add description_text field
                 in_network_text=in_network_text,
                 out_of_network_text=out_network_text,
                 preauth_text=preauth_text,
@@ -729,6 +730,7 @@ class ExtractorAgent:
             records.append(RawExtractionRecord(
                 service_category=pb.category,
                 service_name=pb.service_name,
+                description_text=None,  # NEW: Add description_text field
                 in_network_text=in_network_text,
                 out_of_network_text=out_network_text,
                 preauth_text="Required" if pb.preauth_required else None,

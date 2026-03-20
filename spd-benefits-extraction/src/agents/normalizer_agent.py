@@ -207,8 +207,16 @@ class NormalizerAgent:
             raw_record: Raw extraction record from the Extractor Agent
             
         Returns:
-            Normalized BenefitRecord matching the 15-column schema
+            Normalized BenefitRecord matching the 16-column schema
         """
+        # Check if this is a deductible/OOP threshold row
+        service_name = raw_record.service_name or raw_record.service_category or ""
+        is_deductible_row = self._is_deductible_or_oop_row(service_name)
+        
+        if is_deductible_row:
+            # Handle deductible/OOP rows differently - map to appropriate columns
+            return self._normalize_deductible_row(raw_record)
+        
         # Parse in-network benefits
         in_network_parsed = self.parse_benefit_text(raw_record.in_network_text or "")
         out_network_parsed = self.parse_benefit_text(raw_record.out_of_network_text or "")
@@ -219,7 +227,6 @@ class NormalizerAgent:
             out_network_parsed = in_network_parsed.copy()
         
         # Apply preventive service defaults if no explicit coinsurance
-        service_name = raw_record.service_name or raw_record.service_category or ""
         if self._is_preventive_service(service_name):
             if not in_network_parsed.get("coinsurance"):
                 in_network_parsed["coinsurance"] = "100%"
@@ -231,6 +238,9 @@ class NormalizerAgent:
         # Parse pre-auth
         preauth = self.parse_preauth_text(raw_record.preauth_text or "")
         
+        # Extract and clean description/narrative text
+        description = self._extract_description(raw_record)
+        
         # Calculate confidence based on parsing success
         confidence = self._calculate_normalization_confidence(
             raw_record, in_network_parsed, out_network_parsed
@@ -241,6 +251,7 @@ class NormalizerAgent:
             service=self._normalize_service_name(
                 raw_record.service_name or raw_record.service_category
             ),
+            description=description,  # NEW: Include description
             in_network_coinsurance=in_network_parsed.get("coinsurance"),
             in_network_after_deductible=in_network_parsed.get("after_deductible"),
             in_network_copay=in_network_parsed.get("copay"),
@@ -251,6 +262,150 @@ class NormalizerAgent:
             limit_period=limit_period,
             preauth_required=preauth,
             confidence_score=confidence,
+            source_page=raw_record.page_number,
+            raw_in_network_text=raw_record.in_network_text,
+            raw_out_of_network_text=raw_record.out_of_network_text,
+        )
+    
+    def _is_deductible_or_oop_row(self, service_name: str) -> bool:
+        """
+        Check if a service name indicates this is a deductible or out-of-pocket maximum row.
+        
+        These rows should be mapped to the deductible/OOP columns, not benefit columns.
+        
+        Args:
+            service_name: The service name to check
+            
+        Returns:
+            True if this is a deductible/OOP row
+        """
+        if not service_name:
+            return False
+        
+        name_lower = service_name.lower().strip()
+        
+        # Deductible indicators
+        deductible_keywords = [
+            "deductible",
+            "annual deductible",
+            "calendar year deductible",
+            "plan year deductible",
+        ]
+        
+        # OOP maximum indicators
+        oop_keywords = [
+            "out-of-pocket",
+            "out of pocket",
+            "oop",
+            "maximum out-of-pocket",
+            "annual out-of-pocket",
+            "out-of-pocket maximum",
+            "out-of-pocket limit",
+        ]
+        
+        # Family indicator
+        family_keywords = ["family"]
+        
+        # Check for exact or close matches
+        for keyword in deductible_keywords + oop_keywords:
+            if keyword in name_lower:
+                return True
+        
+        # Also check if service name is simply "Family" (typically follows deductible)
+        if name_lower == "family":
+            return True
+        
+        return False
+    
+    def _normalize_deductible_row(self, raw_record: RawExtractionRecord) -> BenefitRecord:
+        """
+        Normalize a deductible or OOP maximum row.
+        
+        These rows have monetary amounts in the copay fields that should be mapped
+        to the Individual/Family In-Network/Out-of-Network columns.
+        
+        Args:
+            raw_record: Raw extraction record
+            
+        Returns:
+            BenefitRecord with amounts in appropriate deductible/OOP columns
+        """
+        service_name = raw_record.service_name or raw_record.service_category or ""
+        name_lower = service_name.lower().strip()
+        
+        # Determine if this is Individual or Family row
+        is_family = "family" in name_lower or name_lower == "family"
+        
+        # Determine if this is Deductible or OOP
+        is_oop = any(keyword in name_lower for keyword in [
+            "out-of-pocket", "out of pocket", "oop", "maximum"
+        ])
+        
+        # Extract monetary amounts from in-network and out-of-network copay fields
+        in_network_amount = None
+        out_network_amount = None
+        
+        # Parse amounts from the text fields
+        if raw_record.in_network_text:
+            in_network_parsed = self.parse_benefit_text(raw_record.in_network_text)
+            in_network_amount = in_network_parsed.get("copay")
+            # If no copay found, try to extract dollar amount directly
+            if not in_network_amount:
+                dollar_match = re.search(r'\$\s*([\d,]+(?:\.\d{2})?)', raw_record.in_network_text)
+                if dollar_match:
+                    amount = dollar_match.group(1).replace(",", "")
+                    in_network_amount = f"${int(float(amount)):,}"
+        
+        if raw_record.out_of_network_text:
+            out_network_parsed = self.parse_benefit_text(raw_record.out_of_network_text)
+            out_network_amount = out_network_parsed.get("copay")
+            # If no copay found, try to extract dollar amount directly
+            if not out_network_amount:
+                dollar_match = re.search(r'\$\s*([\d,]+(?:\.\d{2})?)', raw_record.out_of_network_text)
+                if dollar_match:
+                    amount = dollar_match.group(1).replace(",", "")
+                    out_network_amount = f"${int(float(amount)):,}"
+        
+        # Map to appropriate columns
+        individual_in_network = None
+        family_in_network = None
+        individual_out_of_network = None
+        family_out_of_network = None
+        
+        if is_family:
+            family_in_network = in_network_amount
+            family_out_of_network = out_network_amount
+        else:
+            individual_in_network = in_network_amount
+            individual_out_of_network = out_network_amount
+        
+        # Create normalized service name
+        if is_oop:
+            service_display = "Out-of-Pocket Maximum" if not is_family else "Family Out-of-Pocket Maximum"
+        else:
+            service_display = "Deductible" if not is_family else "Family Deductible"
+        
+        # Extract description if present
+        description = self._extract_description(raw_record)
+        
+        return BenefitRecord(
+            header=self._normalize_header(raw_record.service_category),
+            service=service_display,
+            description=description,
+            in_network_coinsurance=None,
+            in_network_after_deductible=None,
+            in_network_copay=None,
+            out_of_network_coinsurance=None,
+            out_of_network_after_deductible=None,
+            out_of_network_copay=None,
+            individual_in_network=individual_in_network,
+            family_in_network=family_in_network,
+            individual_out_of_network=individual_out_of_network,
+            family_out_of_network=family_out_of_network,
+            limit_type=None,
+            limit_period=None,
+            preauth_required=None,
+            confidence_score=0.95,  # High confidence for structured threshold data
             source_page=raw_record.page_number,
             raw_in_network_text=raw_record.in_network_text,
             raw_out_of_network_text=raw_record.out_of_network_text,
@@ -303,12 +458,18 @@ class NormalizerAgent:
         if record.in_network_copay or record.out_of_network_copay:
             return True
         
+        # NEW: Has deductible/OOP threshold values = valid (don't filter these out!)
+        if (record.individual_in_network or record.family_in_network or 
+            record.individual_out_of_network or record.family_out_of_network):
+            return True
+        
         # Check if it's a known valid service that might not have coinsurance
         service_lower = (record.service or "").lower()
         
         # Category headers or informational items to filter out
+        # REMOVED "deductible" and "out-of-pocket" from noise patterns - these are valid threshold rows
         noise_patterns = [
-            "benefit maximum", "deductible", "out-of-pocket",
+            "benefit maximum",  # Keep this as it's different from deductible
             "smartstarts", "incentive", "maximum family",
             "second surgical opinion", "other services",
             "additional services covered", "mental conditions for which",
@@ -736,3 +897,54 @@ class NormalizerAgent:
                 return True
         
         return False
+    
+    def _extract_description(self, raw_record: RawExtractionRecord) -> Optional[str]:
+        """
+        Extract and clean narrative description text from raw record.
+        
+        This extracts inclusion/exclusion criteria, conditions, and qualifications
+        that are present in the narrative text but not in the benefit values.
+        
+        Args:
+            raw_record: The raw extraction record
+            
+        Returns:
+            Cleaned description text or None if no description available
+        """
+        description_text = raw_record.description_text
+        
+        if not description_text:
+            return None
+        
+        # Clean the description text
+        description = description_text.strip()
+        
+        # Remove redundant whitespace
+        description = re.sub(r'\s+', ' ', description)
+        
+        # Remove common artifacts and formatting issues
+        description = re.sub(r'^[\*\-•]+\s*', '', description)
+        description = re.sub(r'\s+([.,;:])', r'\1', description)  # Fix spacing before punctuation
+        
+        # Truncate if too long (max 2000 chars per field definition)
+        if len(description) > 2000:
+            description = description[:1997] + "..."
+        
+        # Return None if description is too short to be meaningful
+        if len(description) < 10:
+            return None
+        
+        # Check if description is just a repeat of the service name or benefit values
+        service_name_lower = (raw_record.service_name or "").lower()
+        if description.lower() == service_name_lower:
+            return None
+        
+        # Check if it's just repeating the benefit values
+        in_net_text = (raw_record.in_network_text or "").lower()
+        out_net_text = (raw_record.out_of_network_text or "").lower()
+        desc_lower = description.lower()
+        
+        if desc_lower == in_net_text or desc_lower == out_net_text:
+            return None
+        
+        return description
