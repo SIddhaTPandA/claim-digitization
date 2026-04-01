@@ -3,3 +3,4 @@ sam_venv/
 *.pdf
 *.xlsx
 .pyc
+__pycache__/
