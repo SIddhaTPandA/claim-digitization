@@ -654,7 +654,7 @@ class SchemaRecordBuilder:
             "radiologist", "inpatient services", "30 day supply",
             "generic", "preferred brand", "preferred brand *", "non-preferred brand", 
             "retail pharmacy", "mandatory specialty pharmacy",
-            "family", "individual", "deductible", "incentive",
+            "incentive",  # "family"/"individual"/"deductible" removed - valid threshold sub-labels
             "cardiac", "routine wellness /", "surgical sterilization",
             "nutritional counseling", "allergy testing", "allergy treatment",
             "ambulance, air*", "applied behavioral", "cam program",
@@ -845,6 +845,7 @@ class SchemaRecordBuilder:
         return RawExtractionRecord(
             service_category=category,
             service_name=service_name,  # Use potentially truncated service_name
+            parent_service_name=row.parent_service_name,  # Preserve for Deductible/OOP type detection
             description_text=None,  # NEW: Add description_text field (will be populated by extractor)
             in_network_text=in_network_text,
             out_of_network_text=out_network_text,

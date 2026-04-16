@@ -525,6 +525,12 @@ class RawExtractionRecord(BaseModel):
         default=None,
         description="Raw service name text from document",
     )
+    # Parent threshold label for Individual/Family rows (e.g. "Deductible" or
+    # "Out-of-Pocket Maximum") set by the extractor special-case handler.
+    parent_service_name: Optional[str] = Field(
+        default=None,
+        description="Parent threshold label (e.g. Deductible, Out-of-Pocket Maximum)",
+    )
 
     # NEW: Raw description/narrative text
     description_text: Optional[str] = Field(

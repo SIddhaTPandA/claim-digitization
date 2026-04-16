@@ -796,6 +796,9 @@ class StructuredTableExtractor:
         - Are NOT category headers (shorter, more specific)
         - Contain service-related keywords like "visit", "care", "treatment"
         
+        EXCEPTION: Rows with "Individual" or "Family" in column 2 and monetary
+        values in columns 3-4 are NOT parent rows - they are data rows.
+        
         Examples:
             "Office Visit for Injury / Illness"  (parent, no values)
                 "Primary Care"                    (child, has values)
@@ -804,6 +807,17 @@ class StructuredTableExtractor:
         Returns:
             Tuple of (is_parent_service, parent_name)
         """
+        # SPECIAL CHECK: If this row has "Individual" or "Family" in column 2
+        # with monetary values in columns 3-4, it's NOT a parent service row
+        if len(row) >= 5:
+            col2_lower = row[2].strip().lower()
+            if col2_lower in ['individual', 'family', 'ind', 'fam']:
+                col3 = row[3].strip() if len(row) > 3 else ""
+                col4 = row[4].strip() if len(row) > 4 else ""
+                if '$' in col3 or '$' in col4:
+                    # This is a deductible/OOP data row, not a parent
+                    return False, None
+        
         # Get cells with content
         non_empty = [(idx, cell.strip()) for idx, cell in enumerate(row) if cell.strip()]
         
@@ -978,8 +992,13 @@ class StructuredTableExtractor:
             if extracted_row:
                 extracted_row.category = self._current_category
                 
-                # Apply parent context if available
-                if self._hierarchical_context.current_parent_service:
+                # Apply parent context if available, but do NOT overwrite a
+                # parent that was already set by the special-case handler inside
+                # _extract_row_with_schema (e.g. canonical "Out-of-Pocket Maximum").
+                if (
+                    self._hierarchical_context.current_parent_service
+                    and not extracted_row.parent_service_name
+                ):
                     extracted_row.parent_service_name = self._hierarchical_context.current_parent_service
                     extracted_row.extraction_notes.append(
                         f"Parent: {self._hierarchical_context.current_parent_service}"
@@ -998,12 +1017,19 @@ class StructuredTableExtractor:
         """Check if a row is a repeated header that should be skipped."""
         # Create a signature from non-empty cells
         non_empty = [cell.strip().lower() for cell in row if cell.strip()]
-        
+
         if not non_empty:
             return False
-        
+
+        # Fix E: Rows that contain monetary values or percentages are NEVER headers.
+        # This prevents data rows like "Out-of-Pocket Maximum | Individual | $3,000"
+        # from being falsely matched when "individual" appears inside a stored
+        # long-form header signature from a previous table.
+        if any("$" in cell or "%" in cell for cell in non_empty):
+            return False
+
         signature = " | ".join(sorted(non_empty))
-        
+
         # Check if we've seen this exact combination before
         if signature in self._seen_headers:
             return True
@@ -1048,14 +1074,22 @@ class StructuredTableExtractor:
         """Check if a row is a category header using config patterns."""
         # Count non-empty cells
         non_empty = [(idx, cell.strip()) for idx, cell in enumerate(row) if cell.strip()]
-        
+
         if len(non_empty) != 1:
             return False
-        
+
         cell_idx, cell_text = non_empty[0]
-        
+
         # Should not be a value
         if self._is_value_cell(cell_text):
+            return False
+
+        # FIX 4: Long sentences are explanatory text, not category headers.
+        # Reject if the text is longer than 80 chars OR contains ", " / ". "
+        # after the first 10 characters (sentence indicators).
+        if len(cell_text) > 80:
+            return False
+        if re.search(r'.{10,}[,.]\s', cell_text):
             return False
         
         # Check against category patterns from config ONLY
@@ -1107,9 +1141,91 @@ class StructuredTableExtractor:
         Extract a single data row using schema-bound mapping.
         
         This is the key method that ensures values go to correct columns.
+        
+        Special handling for Deductible/OOP Maximum rows where:
+        - Column 0: "Deductible" or "Out-of-Pocket Maximum" (or empty)
+        - Column 2: "Individual" or "Family"
+        - Columns 3-4: Monetary values
         """
         extraction_notes: List[str] = []
         
+        # SPECIAL CASE: Check if this is a Deductible/OOP row with Individual/Family in column 2
+        # Row structure: ['Deductible', '', 'Individual', '$300', '$450', '']
+        #            OR: ['', '', 'Family', '$600', '$900', '']  (continuation row)
+        if len(row) >= 5:
+            # Normalise col0: collapse all whitespace (including newlines) and
+            # remove any space that appears immediately after a hyphen so that
+            # "Out-of-\nPocket\nMaximum" → "out-of-pocket maximum".
+            col0_raw = row[0].strip()
+            col0 = re.sub(r"\s+", " ", col0_raw).lower()
+            col0 = re.sub(r"-\s+", "-", col0)   # FIX 1: "out-of- pocket" → "out-of-pocket"
+            col2 = row[2].strip().lower()
+
+            # Check if column 2 has individual/family
+            is_individual_family = col2 in ["individual", "family", "ind", "fam"]
+
+            if is_individual_family:
+                # Check if column 0 has deductible/OOP (now works after normalisation)
+                _oop_kws = ("out-of-pocket", "out of pocket", "oop")
+                is_deductible_col0 = "deductible" in col0
+                is_oop_col0 = any(kw in col0 for kw in _oop_kws)
+                is_deductible_oop_row = is_deductible_col0 or is_oop_col0
+
+                # Check if columns 3 and 4 have monetary values (dollar signs)
+                col3 = row[3].strip() if len(row) > 3 else ""
+                col4 = row[4].strip() if len(row) > 4 else ""
+                has_monetary_values = "$" in col3 or "$" in col4
+
+                if has_monetary_values and (is_deductible_oop_row or not col0):
+                    # Derive a canonical parent label so the normaliser can tell
+                    # Deductible rows from OOP rows even when col0 is empty on the
+                    # Family continuation row.
+                    if col0:
+                        if is_oop_col0:
+                            canonical_parent = "Out-of-Pocket Maximum"
+                        else:
+                            canonical_parent = "Deductible"
+                        # FIX 2: always update context with the canonical name so
+                        # the next (Family, empty-col0) row inherits the right label.
+                        self._hierarchical_context.update_parent_service(
+                            canonical_parent, row_idx, table_idx
+                        )
+                        extraction_notes.append(
+                            f"Updated context with canonical parent: {canonical_parent}"
+                        )
+                        parent_service = canonical_parent
+                    else:
+                        # Empty col0 – inherit from context (already canonical)
+                        parent_service = self._hierarchical_context.current_parent_service
+                        extraction_notes.append("Using parent from hierarchical context")
+
+                    # Service name is from column 2 (Individual/Family)
+                    service_name = self._clean_cell_text(row[2])
+
+                    # Values are in columns 3 and 4
+                    in_network_value = self._clean_cell_text(row[3]) if len(row) > 3 else None
+                    out_network_value = self._clean_cell_text(row[4]) if len(row) > 4 else None
+
+                    extraction_notes.append("Deductible/OOP Individual/Family row")
+
+                    return ExtractedRow(
+                        service_name=service_name,
+                        in_network_value=in_network_value,
+                        out_of_network_value=out_network_value,
+                        in_network_copay=None,
+                        out_of_network_copay=None,
+                        limitations=None,
+                        preauth=None,
+                        notes=None,
+                        parent_service_name=parent_service,
+                        row_index=row_idx,
+                        table_index=table_idx,
+                        page_number=page_num,
+                        confidence=0.95,
+                        extraction_notes=extraction_notes,
+                    )
+        
+        # REGULAR ROW EXTRACTION (existing logic)
         # Get service name
         service_col = schema.get_column_for_role(ColumnRole.SERVICE_NAME)
         service_name = ""
